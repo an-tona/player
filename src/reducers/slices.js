@@ -306,7 +306,7 @@ const api = createApi({
                             TrackFind(query:$skip){
                             _id url id3{title artist album year}
                             }
-                        }`, variables: {skip : JSON.stringify([{}, {['skip']: [skip]}])}
+                        }`, variables: {skip : JSON.stringify([{}, {['skip']: [skip], ['limit']: [20]}])}
                     })
                 }),
     })
