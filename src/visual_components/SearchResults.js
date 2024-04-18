@@ -118,7 +118,7 @@ const TrackSearchContainer = () => {
                     {/* <AccessTimeIcon className="header-duration" /> */}
                 </div>
                 <div className='separator' style={{borderBottom: '1px solid rgb(57, 62, 70, 0.2)', marginTop:'5px'}}></div>
-                <div className='track_list' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'49vh'}}>
+                <div className='track_list' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'30vh'}}>
 
                     {tracks?.map((track, index) => (
                         <div key={track._id} className='track_item' >

@@ -1,5 +1,5 @@
-import './App.css';
 import './normalize.css';
+import './App.css';
 import {Router, Route, Link, Redirect} from 'react-router-dom';
 import createHistory from "history/createBrowserHistory";
 import { Provider, connect, useDispatch, useSelector} from 'react-redux';
@@ -15,6 +15,8 @@ import { SignUp } from './visual_components/SignUp';
 import Profile from './visual_components/Profile';
 import SearchResults from './visual_components/SearchResults';
 import Playlist from './visual_components/Playlist';
+import DiscoverTracks from './visual_components/DiscoverTracks';
+
 
 
 const history = createHistory();
@@ -66,6 +68,7 @@ function DefaultPage() {
           <Route path='/profile' component={Profile}/>
           <Route path='/search/:queryValue' component={SearchResults}/>
           <Route path='/playlist/:playlistId' component={Playlist}/>
+          <Route path='/discoverTracks' component={DiscoverTracks}/>
         </div>
       </Switch>
     </main>

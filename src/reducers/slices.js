@@ -8,8 +8,13 @@ const infiniteSrollSlice = createSlice({
     initialState: {tracksArr: []},
     reducers: {
         loadMoreTracks(state, action){
+            console.log(action.payload)
             const {tracks} = action.payload;
-            state.tracksArr.push(tracks);
+            state.tracksArr = [...state.tracksArr, ...tracks];
+            // state.tracksArr.push(...tracks);
+        },
+        clearTracksArr(state) {
+            state.tracksArr.length = 0;
         }
     }
 });
@@ -148,9 +153,6 @@ const playerSlice = createSlice({
 audio.ontimeupdate = () => {
     if (audio.readyState === 4) {
         store.dispatch(playerSlice.actions.setCurrentTime(audio.currentTime));
-        // document.getElementById('track_isLoading_img').style.display = 'none';
-    // } else {
-    //     document.getElementById('track_isLoading_img').style.display = 'block';
     }
 }
 audio.onloadedmetadata = () => store.dispatch(playerSlice.actions.setDuration({duration: audio.duration}))
@@ -297,6 +299,16 @@ const api = createApi({
                         variables: { playlistId: JSON.stringify([{_id}]) }
                     })
                 }),
+                findAllTracks: builder.query({
+                    query: ({ skip }) => ({
+                        document: `
+                        query findAllTracks($skip:String!){
+                            TrackFind(query:$skip){
+                            _id url id3{title artist album year}
+                            }
+                        }`, variables: {skip : JSON.stringify([{}, {['skip']: [skip]}])}
+                    })
+                }),
     })
 })
 
@@ -304,12 +316,13 @@ const loginThunk = api.endpoints.login.initiate;
 const getUserByIdThunk = api.endpoints.getUserById.initiate;
 const registrationThunk = api.endpoints.userRegistration.initiate;
 const { useLoginMutation, useUserRegistrationMutation, useFindPLaylistByNameQuery, useFindTrackQuery,
-        useFindPlaylistByIdQuery, useFindUserPlaylistsQuery, useCreatePlaylistMutation } = api;
+        useFindPlaylistByIdQuery, useFindUserPlaylistsQuery, useCreatePlaylistMutation, useFindAllTracksQuery } = api;
 
 const reducers = {
     [api.reducerPath] : api.reducer,
     [authSlice.name]: localStorageReducer(authSlice.reducer, 'authToken'),
-    [playerSlice.name] : localStorageReducer(playerSlice.reducer, 'player')
+    [playerSlice.name] : localStorageReducer(playerSlice.reducer, 'player'),
+    [infiniteSrollSlice.name] : infiniteSrollSlice.reducer,
 }
 
 const store = configureStore({reducer: reducers, 
@@ -322,6 +335,7 @@ export {
     audio,
     authSlice,
     playerSlice,
+    infiniteSrollSlice,
     address,
     loginThunk,
     getUserByIdThunk,
@@ -333,6 +347,7 @@ export {
     useFindPlaylistByIdQuery,
     useFindUserPlaylistsQuery,
     useCreatePlaylistMutation,
+    useFindAllTracksQuery,
 }
 
 export default store

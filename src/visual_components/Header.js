@@ -96,8 +96,12 @@ function Header() {
           <div className='navigation'>
             <nav className='nav_container'> 
               <ul className="nav_list">
-                  <li><a  href="#" className='nav_item'>Tracks</a></li>
-                  <li><a  href="#" className='nav_item'>Playlists</a></li>
+                  <li><a className='nav_item'
+                  onClick={() => {history.push('/discoverTracks')}}
+                  >Tracks</a></li>
+                  <li><a 
+                  // onClick={() => {history.push('/discoverPlaylists')}}
+                  className='nav_item'>Playlists</a></li>
               </ul>
             </nav>
             <a 
