@@ -17,7 +17,6 @@ import { useFindAllTracksQuery, infiniteSrollSlice } from '../reducers/slices';
 import { address, playerSlice } from '../reducers/slices';
 import { useHistory } from 'react-router-dom';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
-import { actionLoadMoreTracks } from '../reducers/actions';
 
 const CoverImage = styled('div')({
   width: 100,
@@ -43,44 +42,54 @@ function DiscoverTracks() {
 
     useEffect(() => {
         dispatch(infiniteSrollSlice.actions.clearTracksArr());
+        handleLoadMore();
         console.log('TracksArr cleared');
     }, []);
+
+    
 
     const loadedTrackCount = useSelector(state => state.scroll.tracksArr.length)
     console.log('loadedTrackCount', loadedTrackCount)
 
-    const { isLoading, data } = useFindAllTracksQuery({skip: loadedTrackCount});
-    console.log('useFindAllTracksQuery', isLoading, data);
+    const { isFetching, data } = useFindAllTracksQuery({skip: loadedTrackCount});
+    console.log('useFindAllTracksQuery', isFetching, data);
     const tracks = data?.TrackFind;
 
-    const [loaded, setLoaded] = useState(false);
-    useEffect(() => {
-      if (!isLoading && data) {
-          setLoaded(true);
+    const tracksFromState = useSelector(state => state.scroll.tracksArr);
+    // dispatch(infiniteSrollSlice.actions.addTracksToState({tracks}));
+    const handleLoadMore = () => {
+      if (!isFetching) {
+        dispatch(infiniteSrollSlice.actions.addTracksToState({tracks}));
       }
-    }, [isLoading, data]);
+    };
 
     useEffect(() => {
-      if (loaded) {
-          dispatch(infiniteSrollSlice.actions.loadMoreTracks({tracks}));
-      }
-    }, [loaded]);
+      // handleLoadMore();
+  
+      // document.addEventListener("scroll", onScroll);
+      // return function () {
+      //   document.removeEventListener("scroll", onScroll);
+      // };
+    }, [loadedTrackCount, isFetching]);
+
+
+
 
     const isPlaying = useSelector(state => state.player.isPlaying);
     const currentTrackUrl = useSelector(state => state.player.track?.url);
     const relativeTrackUrl = currentTrackUrl.replace(address, '');
 
     return (
-      isLoading 
+      // isFetching 
 
-      ? 
+      // ? 
+      
+      // <div className='track-search-preloader-container' style={{display: 'flex'}}>
+      //     <h4>Loading tracks...</h4>
+      //     <img src={preloader} alt='preloader' style={{width:'30px', height:'30px'}}/>
+      // </div> 
 
-      <div className='track-search-preloader-container' style={{display: 'flex'}}>
-          <h4>Loading tracks...</h4>
-          <img src={preloader} alt='preloader' style={{width:'30px', height:'30px'}}/>
-      </div> 
-
-      :
+      // :
 
       <>
       <h2>Discover new tracks</h2>
@@ -93,9 +102,9 @@ function DiscoverTracks() {
                   <div className="header_year">Year</div>
               </div>
               <div className='separator' style={{borderBottom: '1px solid rgb(57, 62, 70, 0.2)', marginTop:'5px'}}></div>
-              <div className='track_list' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'57vh'}}>
+              <div className='track_list_discovery' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'57vh'}}>
 
-                  {tracks?.map((track, index) => (
+                  {tracksFromState?.map((track, index) => (
                       <div key={track._id} className='track_item' >
                           <div className='track_item_container' style={{paddingLeft:'15px', display: 'flex'}}>
                               <div className='track_number_container'>
@@ -118,7 +127,7 @@ function DiscoverTracks() {
                                               } else if (track.url === null) {
                                                   alert('File is broken :/');
                                               } else {
-                                                  dispatch(playerSlice.actions.setPlaylist({_id: '', tracks: tracks}));
+                                                  dispatch(playerSlice.actions.setPlaylist({_id: '', tracks: tracksFromState}));
                                                   dispatch(playerSlice.actions.play({url: track.url, index}));
                                                   dispatch(playerSlice.actions.setTrack({ url:track.url, _id: track._id, id3: track.id3 }));
                                                   dispatch(playerSlice.actions.setCurrentTime(0));
@@ -166,11 +175,9 @@ function DiscoverTracks() {
                     <Button
                     style={{ backgroundColor: '#8B93FF', color: 'white', borderRadius:'12px' }}
                     onClick={() => {
-                      
-                      
-                      dispatch(actionLoadMoreTracks())
+                      handleLoadMore()
                     }}
-                    >Load More</Button>
+                    > {isFetching ? "Loading..." : "Load More"}</Button>
                   </div>
               </div>
           </div>

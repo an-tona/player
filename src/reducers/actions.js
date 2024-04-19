@@ -32,25 +32,4 @@ const actionLogout = () =>
         dispatch(authSlice.actions.logout())
     }
 
-// const actionLoadMoreTracks = () => {
-//     async (dispatch, getState) => {
-//         const {infiniteScroll} = getState();
-//         const skip = infiniteScroll.tracksArr.length;
-//         const {isLoading, data} = useFindAllTracksQuery({skip: skip})
-//         if (!isLoading){
-//             await dispatch(infiniteSrollSlice.actions.loadMoreTracks({data}))
-//         }
-//     }
-// }
-const actionLoadMoreTracks = () => 
-    async (dispatch, getState) => {
-        const { scroll } = getState();
-        const skip = scroll.tracksArr.length;
-    
-        const { isLoading, data } = useFindAllTracksQuery(skip);
-    
-        if (!isLoading) {
-        dispatch(infiniteSrollSlice.actions.loadMoreTracks({ data }));
-        }
-    };
-export { actionFullLogin, actionFullRegister, actionAboutMe, actionLogout, actionLoadMoreTracks }
+export { actionFullLogin, actionFullRegister, actionAboutMe, actionLogout }

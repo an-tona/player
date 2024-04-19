@@ -7,7 +7,7 @@ const infiniteSrollSlice = createSlice({
     name: 'scroll',
     initialState: {tracksArr: []},
     reducers: {
-        loadMoreTracks(state, action){
+        addTracksToState(state, action){
             console.log(action.payload)
             const {tracks} = action.payload;
             state.tracksArr = [...state.tracksArr, ...tracks];
@@ -306,7 +306,7 @@ const api = createApi({
                             TrackFind(query:$skip){
                             _id url id3{title artist album year}
                             }
-                        }`, variables: {skip : JSON.stringify([{}, {['skip']: [skip], ['limit']: [20]}])}
+                        }`, variables: {skip : JSON.stringify([{}, {['skip']: [skip], ['limit']: [25]}])}
                     })
                 }),
     })
