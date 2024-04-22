@@ -111,7 +111,8 @@ function MusicPlayerSlider() {
 
   const [loop, setLoop] = useState(false);
   const handleLoopIconClick = () => {
-    setLoop(!loop)
+    dispatch(playerSlice.actions.toggleLoop());
+    setLoop(!loop);
   };
   return (
 <>

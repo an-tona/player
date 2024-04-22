@@ -39,24 +39,14 @@ function DiscoverTracks() {
     const history = useHistory();
     const dispatch = useDispatch();
 
-
-    useEffect(() => {
-        dispatch(infiniteSrollSlice.actions.clearTracksArr());
-        handleLoadMore();
-        console.log('TracksArr cleared');
-    }, []);
-
     
 
     const loadedTrackCount = useSelector(state => state.scroll.tracksArr.length)
-    console.log('loadedTrackCount', loadedTrackCount)
-
-    const { isFetching, data } = useFindAllTracksQuery({skip: loadedTrackCount});
+    const { isFetching, isLoading, data } = useFindAllTracksQuery({skip: loadedTrackCount});
     console.log('useFindAllTracksQuery', isFetching, data);
     const tracks = data?.TrackFind;
+    
 
-    const tracksFromState = useSelector(state => state.scroll.tracksArr);
-    // dispatch(infiniteSrollSlice.actions.addTracksToState({tracks}));
     const handleLoadMore = () => {
       if (!isFetching) {
         dispatch(infiniteSrollSlice.actions.addTracksToState({tracks}));
@@ -64,17 +54,15 @@ function DiscoverTracks() {
     };
 
     useEffect(() => {
-      // handleLoadMore();
-  
-      // document.addEventListener("scroll", onScroll);
-      // return function () {
-      //   document.removeEventListener("scroll", onScroll);
-      // };
-    }, [loadedTrackCount, isFetching]);
+      handleLoadMore();
+      return () => {
+        dispatch(infiniteSrollSlice.actions.clearScrollState());
+      }
+    }, [isLoading]);
 
 
 
-
+    const tracksFromState = useSelector(state => state.scroll.tracksArr);
     const isPlaying = useSelector(state => state.player.isPlaying);
     const currentTrackUrl = useSelector(state => state.player.track?.url);
     const relativeTrackUrl = currentTrackUrl.replace(address, '');
@@ -177,7 +165,8 @@ function DiscoverTracks() {
                     onClick={() => {
                       handleLoadMore()
                     }}
-                    > {isFetching ? "Loading..." : "Load More"}</Button>
+                    > {isFetching ? "Loading..." : "Load More"}
+                    </Button>
                   </div>
               </div>
           </div>

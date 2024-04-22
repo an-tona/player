@@ -181,15 +181,17 @@ main {
     border-bottom: 1px solid rgb(57, 62, 70, 0.2);
 }
 
-.search-results-container {
+.search_results_container {
     display: flex;
     gap: 40px;
     flex-direction: column;
 }
 
-.playlist-search-results {
+.playlist_search_results {
     display: flex;
-    gap: 15px;
+    /* gap: 15px; */
+    justify-content: space-around;
+    align-items: center;
 }
 
 .playlist_info_left, .playlist_info_right, .playlist_info, .playlist_icon, .playlist_owner, .playlist_track_count {

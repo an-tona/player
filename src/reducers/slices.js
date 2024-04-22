@@ -5,17 +5,23 @@ import { localStorageReducer, jwtDecode } from '../additional functions/addition
 
 const infiniteSrollSlice = createSlice({
     name: 'scroll',
-    initialState: {tracksArr: []},
+    initialState: {
+        tracksArr: [],
+        playlistsArr: []
+    },
     reducers: {
         addTracksToState(state, action){
-            console.log(action.payload)
             const {tracks} = action.payload;
             state.tracksArr = [...state.tracksArr, ...tracks];
-            // state.tracksArr.push(...tracks);
         },
-        clearTracksArr(state) {
+        addPlaylistsToState(state, action){
+            const {playlists} = action.payload;
+            state.playlistsArr.push(...playlists);
+        },
+        clearScrollState(state) {
             state.tracksArr.length = 0;
-        }
+            state.playlistsArr.length = 0;
+        },
     }
 });
 
@@ -59,6 +65,7 @@ const playerSlice = createSlice({
         currentTrackIndex: 0,
         currentTime: 0,
         volume: 0,
+        loop: false,
 
         track: {
             _id: '',
@@ -123,7 +130,6 @@ const playerSlice = createSlice({
                 state.currentTrackIndex = (state.currentTrackIndex === state.playlist.tracks.length - 1) ? 0 : (state.currentTrackIndex + 1);
                 const nextTrack = state.playlist.tracks[state.currentTrackIndex];
                 if (nextTrack.url) {
-                    console.log('nextTrack.url', nextTrack.url)
                     audio.src = address + nextTrack.url;
                     state.track = nextTrack;
                     audio.play();
@@ -145,6 +151,9 @@ const playerSlice = createSlice({
                     alert('File is broken :/')
                 }
             }
+        },
+        toggleLoop(state) {
+            state.loop = !state.loop;
         }
     },
 });
@@ -155,8 +164,17 @@ audio.ontimeupdate = () => {
         store.dispatch(playerSlice.actions.setCurrentTime(audio.currentTime));
     }
 }
-audio.onloadedmetadata = () => store.dispatch(playerSlice.actions.setDuration({duration: audio.duration}))
-audio.onended = () => (store.dispatch(playerSlice.actions.setCurrentTime(0)) ,store.dispatch(playerSlice.actions.nextTrack()))
+audio.onloadedmetadata = () => store.dispatch(playerSlice.actions.setDuration({duration: audio.duration}));
+// audio.onended = () => (store.dispatch(playerSlice.actions.setCurrentTime(0)), store.dispatch(playerSlice.actions.nextTrack()))
+audio.onended = () => {
+    if (store.getState().player.loop) {
+        store.dispatch(playerSlice.actions.setCurrentTime(0));
+        audio.play();
+    } else {
+        store.dispatch(playerSlice.actions.setCurrentTime(0));
+        store.dispatch(playerSlice.actions.nextTrack());
+    }
+};
 
 
 
@@ -249,7 +267,7 @@ const api = createApi({
                     })
                 }), 
                 findPLaylistByName: builder.query({
-                    query: ({playlistName}) => ({
+                    query: ({ playlistName, skip=0 }) => ({
                         document: `
                         query findPlaylistByName($playlist:String!) {
                             PlaylistFind(query:$playlist) {
@@ -262,7 +280,7 @@ const api = createApi({
                                 }
                             }
                         }`,
-                        variables: { playlist: JSON.stringify([{name:`/${playlistName}/`}]) }
+                        variables: { playlist: JSON.stringify([{name:`/${playlistName}/`}, {['skip']: [skip], ['limit']: [6]}]) }
                     })
                 }),
                 findTrack: builder.query({

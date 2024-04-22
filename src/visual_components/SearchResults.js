@@ -5,7 +5,10 @@ import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import IconButton from '@mui/material/IconButton';
 import PauseRounded from '@mui/icons-material/PauseRounded';
 import PlayArrowRounded from '@mui/icons-material/PlayArrowRounded';
+import Button from '@mui/material/Button';
 import { styled, useTheme } from '@mui/material/styles';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 
 import preloader from '../images/preloader.gif';
 import musicPlayingGif from '../images/music-playing.gif'
@@ -45,7 +48,7 @@ const PlaylistSearchResults = () => {
         
         ?
 
-        <div className='playlist-search-preloader-container' style={{display: 'flex'}}>
+        <div className='playlist_search_preloader_container' style={{display: 'flex'}}>
             <h4>Searching playlists...</h4>
             <img src={preloader} alt='preloader' style={{width:'30px', height:'30px'}}/>
         </div> 
@@ -54,9 +57,16 @@ const PlaylistSearchResults = () => {
 
         <>
         <h4>Playlists found: {playlists.length >= 100 ? '100+' : playlists.length}</h4>
-        <div className='playlist-search-results'>
+        <div className='playlist_search_results' style={{}}>
+            <Button className='prev_playlist_btn'
+            style={{ backgroundColor: '#8B93FF', color: 'white', borderRadius:'50%', height:'45px', width:'45px', minWidth:'45px', visibility:'hidden', marginTop:'-30px' }}
+            onClick={() => {
+                console.log('123')
+            }}
+            > <ArrowBackIosNewIcon />
+            </Button>
             {playlists.map((playlist, index) => (
-                <div key={index} className='playlist-item'
+                <div key={index} className='playlist_item'
                 style={{cursor: 'pointer'}}
                 onClick={() => history.push(`/playlist/${playlist._id}`)}
                 >
@@ -72,16 +82,24 @@ const PlaylistSearchResults = () => {
                     </Box>
                 </div>
             ))}
+            <Button className='next_playlist_btn'
+            style={{ backgroundColor: '#8B93FF', color: 'white', borderRadius:'50%', height:'45px', width:'45px', minWidth:'45px', marginTop:'-30px' }}
+            onClick={() => {
+                console.log('123')
+            }}
+            > 
+            <ArrowForwardIosIcon />
+            </Button>
         </div>
         </>
     )
 }
 
-const TrackSearchContainer = () => {
+const TrackSearchContainer = ({ playlists }) => {
 
-    //const maxHeight = playlists.length >= 1 ? '30vh' : '42vh';
+    // const maxHeight = playlists.length >= 1 ? '30vh' : '42vh';
 
-    
+
     const theme = useTheme();
     const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
 
@@ -103,7 +121,7 @@ const TrackSearchContainer = () => {
 
         ? 
 
-        <div className='track-search-preloader-container' style={{display: 'flex'}}>
+        <div className='track_search_preloader_container' style={{display: 'flex'}}>
             <h4>Searching tracks...</h4>
             <img src={preloader} alt='preloader' style={{width:'30px', height:'30px'}}/>
         </div> 
@@ -112,7 +130,7 @@ const TrackSearchContainer = () => {
 
         <>
         <h4>Tracks found: {tracks ? (tracks.length >= 100 ? '100+' : tracks.length) : 0}</h4>
-        <div className='track-search-results'>
+        <div className='track_search_results'>
             <div className='playlist_content'>
                 <div className='track_list_header' style={{paddingLeft: '15px'}}>
                     <div className="header_number">#</div>
@@ -122,7 +140,7 @@ const TrackSearchContainer = () => {
                     {/* <AccessTimeIcon className="header-duration" /> */}
                 </div>
                 <div className='separator' style={{borderBottom: '1px solid rgb(57, 62, 70, 0.2)', marginTop:'5px'}}></div>
-                <div className='track_list_search' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'42vh'}}>
+                <div className='track_list_search' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'30vh'}}>
 
                     {tracks?.map((track, index) => (
                         <div key={track._id} className='track_item' >
@@ -200,12 +218,15 @@ const TrackSearchContainer = () => {
 
 function SearchResults() {
 
+    // const { queryValue } = useParams();
+    // const { data: playlists } = useFindPLaylistByNameQuery({ playlistName: queryValue }); 
+
     return (
-        <div className='search-results-container'>
-            <div className='playlist-search-results-container'>
+        <div className='search_results_container'>
+            <div className='playlist_search_results_container'>
                 <PlaylistSearchResults />
             </div>
-            <div className='tracks-search-results-container'>
+            <div className='tracks_search_results_container'>
                 <TrackSearchContainer />
             </div>
         </div>
