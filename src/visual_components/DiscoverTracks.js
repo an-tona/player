@@ -1,6 +1,4 @@
-import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import IconButton from '@mui/material/IconButton';
 import PauseRounded from '@mui/icons-material/PauseRounded';
@@ -11,12 +9,10 @@ import { styled, useTheme } from '@mui/material/styles';
 import preloader from '../images/preloader.gif';
 import musicPlayingGif from '../images/music-playing.gif'
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFindAllTracksQuery, infiniteSrollSlice } from '../reducers/slices';
 import { address, playerSlice } from '../reducers/slices';
-import { useHistory } from 'react-router-dom';
-import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 
 const CoverImage = styled('div')({
   width: 100,
@@ -36,12 +32,9 @@ function DiscoverTracks() {
     const theme = useTheme();
     const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
 
-    const history = useHistory();
     const dispatch = useDispatch();
 
-    
-
-    const loadedTrackCount = useSelector(state => state.scroll.tracksArr.length)
+    const loadedTrackCount = useSelector(state => state.scroll.tracksArr.length);
     const { isFetching, isLoading, data } = useFindAllTracksQuery({skip: loadedTrackCount});
     console.log('useFindAllTracksQuery', isFetching, data);
     const tracks = data?.TrackFind;
@@ -68,17 +61,6 @@ function DiscoverTracks() {
     const relativeTrackUrl = currentTrackUrl.replace(address, '');
 
     return (
-      // isFetching 
-
-      // ? 
-      
-      // <div className='track-search-preloader-container' style={{display: 'flex'}}>
-      //     <h4>Loading tracks...</h4>
-      //     <img src={preloader} alt='preloader' style={{width:'30px', height:'30px'}}/>
-      // </div> 
-
-      // :
-
       <>
       <h2>Discover new tracks</h2>
       <div className='track-search-results'>

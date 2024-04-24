@@ -13,10 +13,10 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import preloader from '../images/preloader.gif';
 import musicPlayingGif from '../images/music-playing.gif'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFindPLaylistByNameQuery, useFindTrackQuery } from '../reducers/slices';
-import { address, playerSlice } from '../reducers/slices';
+import { address, playerSlice, infiniteSrollSlice } from '../reducers/slices';
 import { useHistory } from 'react-router-dom';
 import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 
@@ -36,12 +36,32 @@ width: 100,
 
 
 const PlaylistSearchResults = () => {
-    const history = useHistory();
-    const dispatch = useDispatch();
+
     const { queryValue } = useParams();
     const { isLoading, data } = useFindPLaylistByNameQuery({ playlistName: queryValue }); 
-    const playlists = data?.PlaylistFind;
+    const playlists = data?.PlaylistFind || [];
     console.log('playlistSearch', isLoading, data);
+
+    const history = useHistory();
+    const [page, setPage] = useState(1);
+    const playlistsPerPage = 6;
+    const totalPages = Math.ceil(playlists.length / playlistsPerPage);
+
+    const handleNextPage = () => {
+        if (page < totalPages) {
+            setPage(page + 1);
+        }
+    };
+
+    const handlePrevPage = () => {
+        if (page > 1) {
+            setPage(page - 1);
+        }
+    };
+
+    const startIndex = (page - 1) * playlistsPerPage;
+    const endIndex = Math.min(startIndex + playlistsPerPage, playlists.length);
+    const currentPlaylists = playlists.slice(startIndex, endIndex);
 
     return (
         isLoading 
@@ -55,69 +75,111 @@ const PlaylistSearchResults = () => {
         
         :
 
-        <>
-        <h4>Playlists found: {playlists.length >= 100 ? '100+' : playlists.length}</h4>
-        <div className='playlist_search_results' style={{}}>
-            <Button className='prev_playlist_btn'
-            style={{ backgroundColor: '#8B93FF', color: 'white', borderRadius:'50%', height:'45px', width:'45px', minWidth:'45px', visibility:'hidden', marginTop:'-30px' }}
-            onClick={() => {
-                console.log('123')
-            }}
-            > <ArrowBackIosNewIcon />
+        playlists.length === 0 
+        ? 
+        <h4>No playlists were found</h4>
+        :
+        <div className='playlist_search_results'>
+            <Button
+                className='prev_playlist_btn'
+                style={{
+                    backgroundColor: page === 1 ?'#a9a5b8' : '#8B93FF',
+                    color: 'white',
+                    borderRadius: '50%',
+                    height: '45px',
+                    width: '45px',
+                    minWidth: '45px',
+                    marginTop: '-30px'
+                }}
+                onClick={handlePrevPage}
+            >
+                <ArrowBackIosNewIcon />
             </Button>
-            {playlists.map((playlist, index) => (
-                <div key={index} className='playlist_item'
-                style={{cursor: 'pointer'}}
-                onClick={() => history.push(`/playlist/${playlist._id}`)}
+            <div className='found_playlists' style={{display:'flex', justifyContent:'center', gap:'50px', width:'80%'}}>
+            {currentPlaylists.map((playlist, index) => (
+                <div
+                    key={index}
+                    className='playlist_item'
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => history.push(`/playlist/${playlist._id}`)}
                 >
                     <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-                        <CoverImage sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                        <CoverImage sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <QueueMusicIcon style={{ fontSize: 40 }} />
                         </CoverImage>
-                        <Box sx={{ ml: 1.5, minWidth: 0, marginTop: '10px', alignSelf: 'flex-start'}}>
-                            <Typography noWrap sx={{ maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <Box sx={{ ml: 1.5, minWidth: 0, marginTop: '10px', alignSelf: 'flex-start' }}>
+                            <Typography noWrap sx={{ maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {playlist.name}
                             </Typography>
                         </Box>
                     </Box>
                 </div>
             ))}
-            <Button className='next_playlist_btn'
-            style={{ backgroundColor: '#8B93FF', color: 'white', borderRadius:'50%', height:'45px', width:'45px', minWidth:'45px', marginTop:'-30px' }}
-            onClick={() => {
-                console.log('123')
-            }}
-            > 
-            <ArrowForwardIosIcon />
+            </div>
+            <Button
+                className='next_playlist_btn'
+                style={{
+                    backgroundColor: page === totalPages ?'#a9a5b8' : '#8B93FF',
+                    color: 'white',
+                    borderRadius: '50%',
+                    height: '45px',
+                    width: '45px',
+                    minWidth: '45px',
+                    marginTop: '-30px'
+                }}
+                onClick={handleNextPage}
+            >
+                <ArrowForwardIosIcon />
             </Button>
         </div>
-        </>
-    )
-}
+    );
+};
 
-const TrackSearchContainer = ({ playlists }) => {
+
+
+const TrackSearchContainer = () => {
 
     // const maxHeight = playlists.length >= 1 ? '30vh' : '42vh';
-
-
     const theme = useTheme();
     const mainIconColor = theme.palette.mode === 'dark' ? '#fff' : '#000';
-
     const dispatch = useDispatch();
     const { queryValue } = useParams();
-    const {isLoading, data} = useFindTrackQuery({ track: queryValue }); 
+
+
+
+    // const loadedTrackCount = useSelector(state => state.scroll.tracksArr.length);
+    // const { isFetching, isLoading, data } = useFindTrackQuery({ track: queryValue, skip: loadedTrackCount}); 
+    const { isFetching, isLoading, data } = useFindTrackQuery({ track: queryValue }); 
     const tracks = data?.TrackFind;
 
-    const [paused, setPaused] = React.useState(true);
-    const isPlaying = useSelector(state => state.player.isPlaying);
+    console.log('trackSearch', isFetching, isLoading, data);
 
+
+    // const handleLoadMore = () => {
+    //     if (!isFetching) {
+    //       dispatch(infiniteSrollSlice.actions.addTracksToState({tracks}));
+    //     }
+    // };
+  
+    // useEffect(() => {
+    //     if (!isLoading) {
+    //         console.log('USEEFFECT');
+    //         handleLoadMore();
+    //     }
+    //     return () => {
+    //         dispatch(infiniteSrollSlice.actions.clearScrollState());
+    //     }
+    // },[isLoading, queryValue]);
+  
+  
+    // const tracksFromState = useSelector(state => state.scroll.tracksArr);
+
+    const isPlaying = useSelector(state => state.player.isPlaying);
     const currentTrackUrl = useSelector(state => state.player.track?.url);
     const relativeTrackUrl = currentTrackUrl.replace(address, '');
 
-    console.log('trackSearch', isLoading, data);
-
    return (
-        isLoading 
+        isLoading
 
         ? 
 
@@ -129,7 +191,7 @@ const TrackSearchContainer = ({ playlists }) => {
         :
 
         <>
-        <h4>Tracks found: {tracks ? (tracks.length >= 100 ? '100+' : tracks.length) : 0}</h4>
+        {/* <h4>Tracks found: {tracks ? (tracks.length >= 100 ? '100+' : tracks.length) : 0}</h4> */}
         <div className='track_search_results'>
             <div className='playlist_content'>
                 <div className='track_list_header' style={{paddingLeft: '15px'}}>
@@ -137,7 +199,6 @@ const TrackSearchContainer = ({ playlists }) => {
                     <div className="header_name">Name</div>
                     <div className="header_album">Album</div>
                     <div className="header_year">Year</div>
-                    {/* <AccessTimeIcon className="header-duration" /> */}
                 </div>
                 <div className='separator' style={{borderBottom: '1px solid rgb(57, 62, 70, 0.2)', marginTop:'5px'}}></div>
                 <div className='track_list_search' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'30vh'}}>
@@ -217,9 +278,6 @@ const TrackSearchContainer = ({ playlists }) => {
 
 
 function SearchResults() {
-
-    // const { queryValue } = useParams();
-    // const { data: playlists } = useFindPLaylistByNameQuery({ playlistName: queryValue }); 
 
     return (
         <div className='search_results_container'>

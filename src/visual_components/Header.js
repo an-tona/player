@@ -9,6 +9,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import FaceIcon from '@mui/icons-material/Face';
 
 import { useHistory } from 'react-router-dom';
+import { infiniteSrollSlice } from '../reducers/slices';
+import { useDispatch } from 'react-redux';
 
 
 const Search = styled('div')(({ theme }) => ({
@@ -56,12 +58,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 function Header() {
 
   const [inputValue, setInputValue] = useState();
-
+  const dispatch = useDispatch();
   const history = useHistory();
 
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
+      dispatch(infiniteSrollSlice.actions.clearScrollState());
       history.push(`/search/${inputValue}`);
     }
   };

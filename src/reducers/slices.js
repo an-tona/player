@@ -280,11 +280,12 @@ const api = createApi({
                                 }
                             }
                         }`,
-                        variables: { playlist: JSON.stringify([{name:`/${playlistName}/`}, {['skip']: [skip], ['limit']: [6]}]) }
+                        // variables: { playlist: JSON.stringify([{name:`/${playlistName}/`}, {['skip']: [skip], ['limit']: [6]}]) }
+                        variables: { playlist: JSON.stringify([{name:`/${playlistName}/`}]) }
                     })
                 }),
                 findTrack: builder.query({
-                    query: ({ track }) => ({
+                    query: ({ track, skip }) => ({
                         document: `
                         query findTrack($query: String!) {
                             TrackFind(query: $query) {
@@ -297,6 +298,7 @@ const api = createApi({
                                 }
                             }
                         }`,
+                        // variables: { query: JSON.stringify([{ $or: [{ ['id3.artist']: `/${track}/` }, { ['id3.title']: `/${track}/` }] }, {['skip']: [skip], ['limit']: [25]}]) }
                         variables: { query: JSON.stringify([{ $or: [{ ['id3.artist']: `/${track}/` }, { ['id3.title']: `/${track}/` }] }]) }
                     })
                 }),
@@ -327,6 +329,29 @@ const api = createApi({
                         }`, variables: {skip : JSON.stringify([{}, {['skip']: [skip], ['limit']: [25]}])}
                     })
                 }),
+                findPlaylistByOwner: builder.query({
+                    query: ({ owner }) => ({
+                        document: `
+                        query findPlaylistByOwner($owner:String!) {
+                            PlaylistFind(query:$owner) {
+                                _id
+                                owner{login, nick}
+                                name
+                                tracks{_id url id3{title, artist, album, year}}
+                            }
+                        }`,
+                        variables: { owner: JSON.stringify([{owner}]) }
+                    })
+                }),
+                createNewPlaylist: builder.mutation({
+                    query:({name, description, tracks}) => ({
+                        document:`mutation addPlaylist($name: String, $description: String, $tracks:[TrackInput]){
+                            PlaylistUpsert(playlist:{name:$name, description:$description, tracks:$tracks}){
+                                _id owner{login} name description tracks{_id, id3{title, artist, album, year}}
+                            }
+                        }`, variables:{name, description, tracks}
+                    })
+                })
     })
 })
 
@@ -334,7 +359,8 @@ const loginThunk = api.endpoints.login.initiate;
 const getUserByIdThunk = api.endpoints.getUserById.initiate;
 const registrationThunk = api.endpoints.userRegistration.initiate;
 const { useLoginMutation, useUserRegistrationMutation, useFindPLaylistByNameQuery, useFindTrackQuery,
-        useFindPlaylistByIdQuery, useFindUserPlaylistsQuery, useCreatePlaylistMutation, useFindAllTracksQuery } = api;
+        useFindPlaylistByIdQuery, useFindUserPlaylistsQuery, useCreatePlaylistMutation, useFindAllTracksQuery, 
+        useCreateNewPlaylistMutation, useFindPlaylistByOwnerQuery } = api;
 
 const reducers = {
     [api.reducerPath] : api.reducer,
@@ -366,6 +392,8 @@ export {
     useFindUserPlaylistsQuery,
     useCreatePlaylistMutation,
     useFindAllTracksQuery,
+    useCreateNewPlaylistMutation,
+    useFindPlaylistByOwnerQuery
 }
 
 export default store

@@ -60,12 +60,7 @@ const TinyText = styled(Typography)({
 
 
 function MusicPlayerSlider() {
-  // const urlTemp = "track/a9249e23e5c34b73d8147a6d5d4f8c4d";
-  // const fullUrl = address + urlTemp;
-
-
   const dispatch = useDispatch();
-  // const trackUrl = useSelector(state => state.player.track?.url);
   const isPlaying = useSelector(state => state.player.isPlaying);
 
   const [position, setPosition] = React.useState(0);
