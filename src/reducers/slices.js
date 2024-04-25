@@ -326,26 +326,24 @@ const api = createApi({
                             TrackFind(query:$skip){
                             _id url id3{title artist album year}
                             }
-                        }`, variables: {skip : JSON.stringify([{}, {['skip']: [skip], ['limit']: [25]}])}
+                        }`, 
+                        variables: { skip : JSON.stringify([{}, {['skip']: [skip], ['limit']: [25]}]) }
                     })
                 }),
                 findPlaylistByOwner: builder.query({
-                    query: ({ owner }) => ({
-                        document: `
-                        query findPlaylistByOwner($owner:String!) {
-                            PlaylistFind(query:$owner) {
+                    query:({_id}) => ({
+                        document: `query findPlaylist($query: String){
+                            PlaylistFind(query:$query){
                                 _id
-                                owner{login, nick}
                                 name
-                                tracks{_id url id3{title, artist, album, year}}
-                            }
-                        }`,
-                        variables: { owner: JSON.stringify([{owner}]) }
+                        }
+                    }`, variables: { query: JSON.stringify([{___owner: _id}])}
                     })
                 }),
                 createNewPlaylist: builder.mutation({
                     query:({name, description, tracks}) => ({
-                        document:`mutation addPlaylist($name: String, $description: String, $tracks:[TrackInput]){
+                        document:`
+                        mutation addPlaylist($name: String, $description: String, $tracks:[TrackInput]){
                             PlaylistUpsert(playlist:{name:$name, description:$description, tracks:$tracks}){
                                 _id owner{login} name description tracks{_id, id3{title, artist, album, year}}
                             }

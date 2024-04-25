@@ -35,7 +35,7 @@ aside {
     /* background-color: #FFF7FC; */
     overflow-y: auto;
     border-right: 1px solid rgb(57, 62, 70, 0.2);
-    padding: 20px 30px;
+    padding: 20px 15px;
 }
 
 main {
@@ -266,4 +266,11 @@ main {
 }
 .track_item:hover .track_number {
     display: none;
+}
+
+.user_playlist_item {
+    transition: 0.3s;
+}
+.user_playlist_item:hover {
+    background-color: rgb(211,211,211,0.2)
 }
