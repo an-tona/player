@@ -275,7 +275,11 @@ function Aside() {
 function TransitionsModal({ setPlaylists }) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setPlaylistName('');
+    setDescription('');
+    setOpen(false);
+  }
 
   const [playlistName, setPlaylistName] = useState('');
   const [description, setDescription] = useState('');

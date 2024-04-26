@@ -45,9 +45,11 @@ const authSlice = createSlice({
             state.userInfo = payload;
         },
         setAvatar(state, action){
-            //
+            console.log('action.payload', action.payload)
+            const{avatar} = action.payload
+            state.userInfo.avatar = avatar
         },
-        setNickName(state, action){
+        setNickname(state, action){
             const {nick} = action.payload;
             state.payload.nick = nick;
         }
@@ -222,7 +224,7 @@ const api = createApi({
                         return ([{ type: 'User', id: _id}])
                     }
                 }),
-                setUserNick: builder.mutation({
+                setNickname: builder.mutation({
                     query: ({_id, nick}) => ({
                         document: `
                             mutation setNick($_id:String, $nick:String) {
@@ -358,7 +360,7 @@ const getUserByIdThunk = api.endpoints.getUserById.initiate;
 const registrationThunk = api.endpoints.userRegistration.initiate;
 const { useLoginMutation, useUserRegistrationMutation, useFindPLaylistByNameQuery, useFindTrackQuery,
         useFindPlaylistByIdQuery, useFindUserPlaylistsQuery, useCreatePlaylistMutation, useFindAllTracksQuery, 
-        useCreateNewPlaylistMutation, useFindPlaylistByOwnerQuery } = api;
+        useCreateNewPlaylistMutation, useFindPlaylistByOwnerQuery, useSetNicknameMutation, useSetUserAvatarMutation } = api;
 
 const reducers = {
     [api.reducerPath] : api.reducer,
@@ -375,23 +377,25 @@ store.subscribe(() => console.log(store.getState()))
 
 export {
     audio,
+    address,
     authSlice,
     playerSlice,
     infiniteSrollSlice,
-    address,
     loginThunk,
     getUserByIdThunk,
     registrationThunk,
-    useLoginMutation,
-    useUserRegistrationMutation,
-    useFindPLaylistByNameQuery,
     useFindTrackQuery,
+    useFindAllTracksQuery,
     useFindPlaylistByIdQuery,
     useFindUserPlaylistsQuery,
-    useCreatePlaylistMutation,
-    useFindAllTracksQuery,
+    useFindPLaylistByNameQuery,
+    useFindPlaylistByOwnerQuery,
     useCreateNewPlaylistMutation,
-    useFindPlaylistByOwnerQuery
+    useUserRegistrationMutation,
+    useCreatePlaylistMutation,
+    useSetUserAvatarMutation,
+    useSetNicknameMutation,
+    useLoginMutation,
 }
 
 export default store
