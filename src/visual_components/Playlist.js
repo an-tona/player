@@ -133,7 +133,7 @@ function Playlist() {
                                     <IconButton
                                         aria-label={!isPlaying && relativeTrackUrl !== track.url ? 'play' : 'pause'}
                                         onClick={() => {
-                                            if (relativeTrackUrl === track.url) {
+                                            if (relativeTrackUrl === track.url && isPlaying) {
                                                 dispatch(playerSlice.actions.pause());
                                             } else if (track.url === null) {
                                                 alert('File is broken :/');
@@ -141,9 +141,11 @@ function Playlist() {
                                                 if (statePlaylistId !== playlist._id) {
                                                     dispatch(playerSlice.actions.setPlaylist({_id: playlist._id, tracks: tracks}));
                                                 }
+                                                if (relativeTrackUrl !== track.url) {
+                                                    dispatch(playerSlice.actions.setCurrentTime(0));
+                                                }
                                                 dispatch(playerSlice.actions.play({url: track.url, index}));
                                                 dispatch(playerSlice.actions.setTrack({ url:track.url, _id: track._id, id3: track.id3 }));
-                                                dispatch(playerSlice.actions.setCurrentTime(0));
                                             }
                                         }}
                                         style={{ marginLeft: '-10px' }}
