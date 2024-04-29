@@ -46,12 +46,12 @@ const authSlice = createSlice({
         },
         setAvatar(state, action){
             console.log('action.payload', action.payload)
-            const{avatar} = action.payload
-            state.userInfo.avatar = avatar
+            const{avatar} = action.payload;
+            state.userInfo.avatar = avatar;
         },
         setNickname(state, action){
             const {nick} = action.payload;
-            state.payload.nick = nick;
+            state.userInfo.nick = nick;
         }
     }
 });

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useFindUserPlaylistsQuery, address, useSetUserAvatarMutation, authSlice } from '../reducers/slices';
+import { useFindUserPlaylistsQuery, address, useSetUserAvatarMutation, useSetNicknameMutation, authSlice } from '../reducers/slices';
 import {useDropzone} from 'react-dropzone'
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useCallback } from 'react';
@@ -11,7 +11,6 @@ import Backdrop from '@mui/material/Backdrop';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 import Button from '@mui/material/Button';
-import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import EditIcon from '@mui/icons-material/Edit';
 import FaceIcon from '@mui/icons-material/Face';
 import { styled } from '@mui/material/styles';
@@ -61,18 +60,14 @@ const CoverImage = styled('div')({
       }).then(res => res.json()).then(data => handleFileUploaded(data))
     onFile()
     }, []) 
-    const {acceptedFiles, getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
-
-    useEffect(() => {
-      //////////////////////////////
-    },[acceptedFiles])
+    const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
 
     return (
       <div {...getRootProps()} className="dropzone">
         <input {...getInputProps()} className='dropzone-input' />
         {
           isDragActive ?
-            <p style={{fontSize: "15px", margin: "10px"}}>Drop the files here ...</p> :
+            <p style={{fontSize: "15px", margin: "10px"}}>{text}</p> :
             <p style={{fontSize: "12px", cursor:'pointer'}}>{text}</p>
         }
       </div>
@@ -97,7 +92,8 @@ function Profile() {
   const [nickname, setNickname] = useState(`${userInfo.nick || userInfo.login}`);
   const userId = useSelector(state => state.auth.userInfo._id);
   const avatarUrl = useSelector(state => state.auth.userInfo.avatar?.url);
-  const [setAvatar, {isLoading}] = useSetUserAvatarMutation()
+  const [setAvatar, {isLoading}] = useSetUserAvatarMutation();
+  const [setNicknameMutation, {loading}] = useSetNicknameMutation();
   const [uploadedFileId, setUploadedFileId] = useState(null);
 
   const handleFileUploaded = (fileId) => {
@@ -105,8 +101,17 @@ function Profile() {
   }
 
   const handleSaveChanges = () => {
+
+    if (uploadedFileId) {
     setAvatar({id: userId, avatarId: uploadedFileId._id});
     dispatch(authSlice.actions.setAvatar({avatar:uploadedFileId}));
+    }
+
+    if (nickname) {
+      setNicknameMutation({id: userId, nick:nickname});
+      dispatch(authSlice.actions.setNickname({nick:nickname}));
+    }
+
     handleClose();
   }
 
@@ -130,14 +135,17 @@ function Profile() {
             <div className='name_container'>
               <Typography sx={{fontSize:'40px'}}>{userInfo.nick || userInfo.login}</Typography>
             </div>
-            <div className='edit_user_info_container'>
+            <div className='profile_options' style={{position:'absolute', right:'20px', display:'flex', flexDirection:'column', gap:'15px'}}>
+              <div style={{cursor:'pointer'}} onClick={() => (dispatch(actionLogout()), history.push('/sign-in'))}>
+                Logout
+              <LogoutIcon />
+              </div>
+              <div className='edit_user_info_container' style={{display:'flex', justifyContent:'space-between', cursor:'pointer'}} onClick={handleOpen}>
+                Edit 
                 <EditIcon />
+              </div>
             </div>
-            <div onClick={() => (dispatch(actionLogout()), history.push('/sign-in'))}>
-            Logout
-            <LogoutIcon />
-            </div>
-
+            
             <Modal
               aria-labelledby="transition-modal-title"
               aria-describedby="transition-modal-description"
@@ -166,7 +174,7 @@ function Profile() {
                     <div className='avatar_hover_container' onClick={handleOpen}>
                       <Dropzone onFileUploaded={handleFileUploaded} text='Choose image'/>
                       <EditIcon />
-                      <p style={{fontSize:'12px', cursor:'pointer'}} onClick={() => console.log('TO DO')}>Remove avatar</p> {/* TO DO */}
+                      <p style={{fontSize:'12px', cursor:'pointer'}} onClick={() => console.log('TO DO')}>Remove avatar</p>
                     </div>
                 </CoverImage>
                     <TextField

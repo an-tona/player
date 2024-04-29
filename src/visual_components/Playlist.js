@@ -1,17 +1,11 @@
 import React from 'react';
-import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
-import { useFindPlaylistByIdQuery } from '../reducers/slices';
+// import { useFindPlaylistByIdQuery } from '../reducers/slices';
 import preloader from '../images/preloader.gif';
-import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import PauseIcon from '@mui/icons-material/Pause';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import IconButton from '@mui/material/IconButton';
 import PauseRounded from '@mui/icons-material/PauseRounded';
@@ -20,7 +14,7 @@ import { styled, useTheme } from '@mui/material/styles';
 import musicPlayingGif from '../images/music-playing.gif'
 
 
-import { address, playerSlice } from '../reducers/slices';
+import { address, playerSlice, useFindPlaylistByIdQuery} from '../reducers/slices';
 
 const CoverImage = styled('div')({
     width: 100,
