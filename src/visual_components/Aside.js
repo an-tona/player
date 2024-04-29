@@ -9,12 +9,14 @@ import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import AddIcon from '@mui/icons-material/Add';
 import { styled } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
-import { useCreateNewPlaylistMutation, useFindPlaylistByOwnerQuery } from '../reducers/slices';
+import { useCreateNewPlaylistMutation, useFindPlaylistByOwnerQuery, useDeletePlaylistMutation } from '../reducers/slices';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import preloader from '../images/preloader.gif';
 import EditPlaylist from './UserPlaylist';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import ClearIcon from '@mui/icons-material/Clear';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const style = {
   position: 'absolute',
@@ -42,8 +44,23 @@ const CoverImage = styled('div')({
   },
 });
 
-const UserPlaylists = ({ playlists }) => {
+
+const UserPlaylists = ({ playlists, setPlaylists }) => {
   const history = useHistory();
+  const [deletePlaylist, {isLoading}] = useDeletePlaylistMutation();
+
+  const handleDeletePlaylist = (_id) => {
+    const currentPath = history.location.pathname;
+    if (currentPath === `/playlist/${_id}`) {
+      history.push('/');
+    }
+    
+    deletePlaylist({_id}).then((response) => {
+      if (!response.error) {
+        setPlaylists(prevPlaylists => prevPlaylists.filter(playlist => playlist._id !== _id));
+      }
+    });
+  }
 
   return (
     <div className='user_playlists_container' style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '20px' }}>
@@ -51,24 +68,34 @@ const UserPlaylists = ({ playlists }) => {
         <div
           key={index}
           className='user_playlist_item'
-          style={{ cursor: 'pointer', borderRadius: '12px' }}
+          style={{ cursor: 'pointer', borderRadius: '12px', position:'relative' }}
           onClick={() => history.push(`/playlist/${playlist._id}`)}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'row', justifyContent: 'flex-start' }}>
+
             <CoverImage sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px' }}>
               <QueueMusicIcon style={{ fontSize: 20 }} />
             </CoverImage>
+
             <Box sx={{ ml: 1.5, minWidth: 0, marginTop: '10px', alignSelf: 'flex-start' }}>
-              <Typography noWrap sx={{ maxWidth: 80, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <Typography noWrap sx={{ maxWidth:'120px', minWidth:'80px', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {playlist.name}
               </Typography>
             </Box>
+
+            <Button
+              style={{ minWidth: '40px', width: '35px', height: '35px', borderRadius: '100%', position: 'absolute', right:'10px', visibility:'hidden'}}
+              onClick={(e) => {e.stopPropagation(); handleDeletePlaylist(playlist._id)}}
+            >
+              <DeleteForeverIcon sx={{ color: '#8B93FF', width:'25px' }} />
+            </Button>
           </Box>
         </div>
       ))}
     </div>
   );
 };
+
 
 function Aside() {
   const userId = useSelector(state => state.auth.userInfo._id);
@@ -80,6 +107,7 @@ function Aside() {
       setPlaylists(data?.PlaylistFind || []);
     }
   }, [isLoading, data]);
+  
 
   return (
     <aside style={{ zIndex: '1' }}>
@@ -89,7 +117,7 @@ function Aside() {
         </div>
       ) : (
         <>
-          <UserPlaylists playlists={playlists} />
+          <UserPlaylists playlists={playlists} setPlaylists={setPlaylists}/>
           <TransitionsModal setPlaylists={setPlaylists} />
         </>
       )}
@@ -97,27 +125,35 @@ function Aside() {
   );
 }
 
-const DNDTrack = ({track}) => (
+const DNDTrack = ({ track, onDelete }) => (
   <div key={track?._id} className='track_item_drag' >
-                      <div className='track_item_container' style={{paddingLeft:'15px', display: 'flex'}}>
-                          <div className='track_name_container' style={{display: 'flex', gap:'15px'}}>
-                              <div className='track_icon'>
-                                  <CoverImage sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width:'44px', height:'44px'}}>
-                                      <AudiotrackIcon style={{ fontSize: 24 }} />
-                                  </CoverImage>
-                              </div>
-                              <div className='track_name_artist'>
-                                  <Typography className='track_name'>
-                                      {track?.id3?.title || 'Untitled'}
-                                  </Typography>
-                                  <Typography className='track_artist' sx={{fontSize: 14}}>
-                                      {track?.id3?.artist || 'Unknown'}
-                                  </Typography>
-                              </div>
-                          </div>
-                      </div>
+      <div className='track_item_container' style={{ paddingLeft: '15px', display: 'flex' }}>
+          <div className='track_name_container' style={{ display: 'flex', gap: '15px' }}>
+              <div className='track_icon'>
+                  <CoverImage sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '44px', height: '44px' }}>
+                      <AudiotrackIcon style={{ fontSize: 24 }} />
+                  </CoverImage>
+              </div>
+              <div className='track_name_artist'>
+                  <Typography className='track_name'>
+                      {track?.id3?.title || 'Untitled'}
+                  </Typography>
+                  <Typography className='track_artist' sx={{ fontSize: 14 }}>
+                      {track?.id3?.artist || 'Unknown'}
+                  </Typography>
+              </div>
+              <Button
+                  style={{ minWidth: '40px', width: '40px', height: '40px', borderRadius: '100%', position: 'relative', right: '-70px' }}
+                  onClick={() => onDelete(track)}
+              >
+                  <ClearIcon sx={{ color: '#8B93FF' }} />
+              </Button>
+          </div>
+      </div>
   </div>
-)
+);
+
+
 
 function TransitionsModal({ setPlaylists }) {
   const [open, setOpen] = React.useState(false);
@@ -147,16 +183,7 @@ function TransitionsModal({ setPlaylists }) {
   };
 
 
-  // const [playlist, setPlaylist] = useState({ _id: '', name: '', description: '', tracks: [] });
   const [tracks, setTracks] = useState([]);
-
-  const handleSave = (playlistData) => {
-      console.log(playlistData);
-  }
-
-  const handleSaveButtonClick = () => {
-      handleSave(tracks);
-  };
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>

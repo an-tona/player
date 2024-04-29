@@ -351,7 +351,17 @@ const api = createApi({
                             }
                         }`, variables:{name, description, tracks}
                     })
-                })
+                }),
+                deletePlaylist: builder.mutation({
+                    query:({_id}) => ({
+                        document:`
+                        mutation deletePlaylist($_id: ID!) {
+                            PlaylistDelete(playlist: {_id: $_id}) {
+                              _id name
+                            }
+                          }`, variables:{_id}
+                    })
+                }),
     })
 })
 
@@ -360,7 +370,8 @@ const getUserByIdThunk = api.endpoints.getUserById.initiate;
 const registrationThunk = api.endpoints.userRegistration.initiate;
 const { useLoginMutation, useUserRegistrationMutation, useFindPLaylistByNameQuery, useFindTrackQuery,
         useFindPlaylistByIdQuery, useFindUserPlaylistsQuery, useCreatePlaylistMutation, useFindAllTracksQuery, 
-        useCreateNewPlaylistMutation, useFindPlaylistByOwnerQuery, useSetNicknameMutation, useSetUserAvatarMutation } = api;
+        useCreateNewPlaylistMutation, useFindPlaylistByOwnerQuery, useSetNicknameMutation, useSetUserAvatarMutation,
+        useDeletePlaylistMutation } = api;
 
 const reducers = {
     [api.reducerPath] : api.reducer,
@@ -393,6 +404,7 @@ export {
     useCreateNewPlaylistMutation,
     useUserRegistrationMutation,
     useCreatePlaylistMutation,
+    useDeletePlaylistMutation,
     useSetUserAvatarMutation,
     useSetNicknameMutation,
     useLoginMutation,

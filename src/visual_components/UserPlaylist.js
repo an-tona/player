@@ -156,27 +156,51 @@ const DropzoneWithUpload = ({onUpload, children}) => {
     )
 }
 
-// const DNDTrack = ({track}) => (
-//     <div key={track?._id} className='track_item_drag' >
-//                         <div className='track_item_container' style={{paddingLeft:'15px', display: 'flex'}}>
-//                             <div className='track_name_container' style={{display: 'flex', gap:'15px'}}>
-//                                 <div className='track_icon'>
-//                                     <CoverImage sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width:'44px', height:'44px'}}>
-//                                         <AudiotrackIcon style={{ fontSize: 24 }} />
-//                                     </CoverImage>
-//                                 </div>
-//                                 <div className='track_name_artist'>
-//                                     <Typography className='track_name'>
-//                                         {track?.id3?.title || 'Untitled'}
-//                                     </Typography>
-//                                     <Typography className='track_artist' sx={{fontSize: 14}}>
-//                                         {track?.id3?.artist || 'Unknown'}
-//                                     </Typography>
-//                                 </div>
-//                             </div>
-//                         </div>
-//     </div>
-// )
+// export default function EditPlaylist({defaultTracks=[], onSave, renderComp}) {
+//     const [tracks, setTracks] = useState(defaultTracks);
+
+//     useEffect(() => {
+//         onSave(tracks);
+//     }, [tracks]);
+
+//     return (
+//         <div>
+//             <DropzoneWithUpload onUpload={file => setTracks(prevTracks => [...prevTracks, file])}>
+//                 <p style={{cursor:'pointer'}}>Upload your tracks</p>
+//             </DropzoneWithUpload>
+//             <DND items={tracks} onChange={setTracks} render={renderComp} />         
+//         </div>
+//     );
+// }
+
+
+export default function EditPlaylist({ defaultTracks = [], onSave, renderComp }) {
+    const [tracks, setTracks] = useState(defaultTracks);
+
+    useEffect(() => {
+        onSave(tracks);
+    }, [tracks]);
+
+    const onDelete = (index) => {
+        setTracks(prevTracks => {
+            const newTracks = [...prevTracks];
+            newTracks.splice(index, 1);
+            return newTracks;
+        });
+    };
+
+    return (
+        <div>
+            <DropzoneWithUpload onUpload={file => setTracks(prevTracks => [...prevTracks, file])}>
+                <p style={{ cursor: 'pointer' }}>Upload your tracks</p>
+            </DropzoneWithUpload>
+            <DND items={tracks} onChange={setTracks} render={(props) => renderComp({ ...props, onDelete })} />
+        </div>
+    );
+}
+
+
+
 
 // export default function EditPlaylist({defaultPlaylist={_id:'', name:'', description:'', tracks:[]}, onSave, renderComp}) {
 //     const [playlist, setPlaylist] = useState(defaultPlaylist)
@@ -195,36 +219,6 @@ const DropzoneWithUpload = ({onUpload, children}) => {
 //         </div>
 //     )
 // }
-
-export default function EditPlaylist({defaultTracks=[], onSave, renderComp}) {
-    const [tracks, setTracks] = useState(defaultTracks);
-
-    useEffect(() => {
-        onSave(tracks);
-    }, [tracks]);
-
-    return (
-        <div>
-            <DropzoneWithUpload onUpload={file => setTracks(prevTracks => [...prevTracks, file])}>
-                <p style={{cursor:'pointer'}}>Upload your tracks</p>
-            </DropzoneWithUpload>
-            <DND items={tracks} onChange={setTracks} render={renderComp} />         
-        </div>
-    );
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // export default function UserPlaylist() {

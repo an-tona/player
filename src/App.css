@@ -274,9 +274,11 @@ main {
     transition: 0.3s;
 }
 .user_playlist_item:hover {
-    background-color: rgb(211,211,211,0.2)
+    background-color: rgb(211,211,211,0.2);
 }
-
+.user_playlist_item:hover button {
+    visibility: visible !important;
+}
 
 .avatar:hover > img, .avatar:hover > svg {
     filter: blur(3px);
