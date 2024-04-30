@@ -99,15 +99,15 @@ function Header() {
           <div className='navigation'>
             <nav className='nav_container'> 
               <ul className="nav_list">
-                  <li><a className='nav_item'
+                  <li><a className='nav_item' style={{cursor:'pointer'}}
                   onClick={() => {history.push('/discoverTracks')}}
                   >Tracks</a></li>
-                  <li><a 
+                  <li><a style={{cursor:'pointer'}}
                   // onClick={() => {history.push('/discoverPlaylists')}}
                   className='nav_item'>Playlists</a></li>
               </ul>
             </nav>
-            <a 
+            <a style={{cursor:'pointer'}}
             onClick={() => history.push('/profile')}
             ><FaceIcon /></a>
             

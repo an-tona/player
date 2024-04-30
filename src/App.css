@@ -276,8 +276,14 @@ main {
 .user_playlist_item:hover {
     background-color: rgb(211,211,211,0.2);
 }
+
+.user_playlist_item button {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+}
+
 .user_playlist_item:hover button {
-    visibility: visible !important;
+    opacity: 1;
 }
 
 .avatar:hover > img, .avatar:hover > svg {

@@ -84,7 +84,7 @@ const UserPlaylists = ({ playlists, setPlaylists }) => {
             </Box>
 
             <Button
-              style={{ minWidth: '40px', width: '35px', height: '35px', borderRadius: '100%', position: 'absolute', right:'10px', visibility:'hidden'}}
+              style={{ minWidth: '40px', width: '35px', height: '35px', borderRadius: '100%', position: 'absolute', right:'10px'}}
               onClick={(e) => {e.stopPropagation(); handleDeletePlaylist(playlist._id)}}
             >
               <DeleteForeverIcon sx={{ color: '#8B93FF', width:'25px' }} />

@@ -7,20 +7,20 @@ const infiniteSrollSlice = createSlice({
     name: 'scroll',
     initialState: {
         tracksArr: [],
-        playlistsArr: []
+        // playlistsArr: []
     },
     reducers: {
         addTracksToState(state, action){
             const {tracks} = action.payload;
             state.tracksArr = [...state.tracksArr, ...tracks];
         },
-        addPlaylistsToState(state, action){
-            const {playlists} = action.payload;
-            state.playlistsArr.push(...playlists);
-        },
+        // addPlaylistsToState(state, action){
+        //     const {playlists} = action.payload;
+        //     state.playlistsArr.push(...playlists);
+        // },
         clearScrollState(state) {
             state.tracksArr.length = 0;
-            state.playlistsArr.length = 0;
+            // state.playlistsArr.length = 0;
         },
     }
 });
@@ -167,7 +167,6 @@ audio.ontimeupdate = () => {
     }
 }
 audio.onloadedmetadata = () => store.dispatch(playerSlice.actions.setDuration({duration: audio.duration}));
-// audio.onended = () => (store.dispatch(playerSlice.actions.setCurrentTime(0)), store.dispatch(playerSlice.actions.nextTrack()))
 audio.onended = () => {
     if (store.getState().player.loop) {
         store.dispatch(playerSlice.actions.setCurrentTime(0));

@@ -135,14 +135,14 @@ function Profile() {
             <div className='name_container'>
               <Typography sx={{fontSize:'40px'}}>{userInfo.nick || userInfo.login}</Typography>
             </div>
-            <div className='profile_options' style={{position:'absolute', right:'20px', display:'flex', flexDirection:'column', gap:'15px'}}>
-              <div style={{cursor:'pointer'}} onClick={() => (dispatch(actionLogout()), history.push('/sign-in'))}>
+            <div className='profile_options' style={{position:'absolute', right:'20px', display:'flex', flexDirection:'column', gap:'15px', marginTop:'15px'}}>
+              <div style={{cursor:'pointer', display:'flex', justifyContent:'center', alignContent:'center', gap:'5px'}} onClick={() => (dispatch(actionLogout()), history.push('/sign-in'))}>
                 Logout
-              <LogoutIcon />
+              <LogoutIcon style={{marginTop:'-3px'}} />
               </div>
-              <div className='edit_user_info_container' style={{display:'flex', justifyContent:'space-between', cursor:'pointer'}} onClick={handleOpen}>
+              <div className='edit_user_info_container' style={{display:'flex', justifyContent:'space-between', alignContent:'center', cursor:'pointer'}} onClick={handleOpen}>
                 Edit 
-                <EditIcon />
+                <EditIcon  style={{marginTop:'-3px'}}/>
               </div>
             </div>
             
@@ -174,7 +174,7 @@ function Profile() {
                     <div className='avatar_hover_container' onClick={handleOpen}>
                       <Dropzone onFileUploaded={handleFileUploaded} text='Choose image'/>
                       <EditIcon />
-                      <p style={{fontSize:'12px', cursor:'pointer'}} onClick={() => console.log('TO DO')}>Remove avatar</p>
+                      <p style={{fontSize:'12px', cursor:'pointer'}} onClick={() => dispatch(authSlice.actions.setAvatar({avatar:null}))}>Remove avatar</p>
                     </div>
                 </CoverImage>
                     <TextField

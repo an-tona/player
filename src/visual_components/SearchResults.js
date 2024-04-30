@@ -68,7 +68,7 @@ const PlaylistSearchResults = () => {
         
         ?
 
-        <div className='playlist_search_preloader_container' style={{display: 'flex'}}>
+        <div className='playlist_search_preloader_container' style={{display: 'flex', alignItems:'center', gap:'10px'}}>
             <h4>Searching playlists...</h4>
             <img src={preloader} alt='preloader' style={{width:'30px', height:'30px'}}/>
         </div> 
@@ -77,7 +77,7 @@ const PlaylistSearchResults = () => {
 
         playlists.length === 0 
         ? 
-        <h4>No playlists were found</h4>
+        <h4 style={{height:'12vh'}}>No playlists were found</h4>
         :
         <div className='playlist_search_results'>
             <Button
@@ -183,7 +183,7 @@ const TrackSearchContainer = () => {
 
         ? 
 
-        <div className='track_search_preloader_container' style={{display: 'flex'}}>
+        <div className='track_search_preloader_container' style={{display: 'flex', alignItems:'center', gap:'10px'}}>
             <h4>Searching tracks...</h4>
             <img src={preloader} alt='preloader' style={{width:'30px', height:'30px'}}/>
         </div> 
@@ -201,7 +201,7 @@ const TrackSearchContainer = () => {
                     <div className="header_year">Year</div>
                 </div>
                 <div className='separator' style={{borderBottom: '1px solid rgb(57, 62, 70, 0.2)', marginTop:'5px'}}></div>
-                <div className='track_list_search' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'30vh'}}>
+                <div className='track_list_search' style={{display:'flex', flexDirection:'column', gap:'15px', paddingTop:'15px', overflowY:'scroll', maxHeight:'42vh'}}>
 
                     {tracks?.map((track, index) => (
                         <div key={track._id} className='track_item' >
