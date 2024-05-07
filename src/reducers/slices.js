@@ -45,7 +45,6 @@ const authSlice = createSlice({
             state.userInfo = payload;
         },
         setAvatar(state, action){
-            console.log('action.payload', action.payload)
             const{avatar} = action.payload;
             state.userInfo.avatar = avatar;
         },
@@ -87,7 +86,6 @@ const playerSlice = createSlice({
     reducers: {
         play(state, action) {
             const { url, index } = action.payload;
-            console.log('action.payload', action.payload)
             audio.src = address + url;
             audio.currentTime = state.currentTime;
             audio.play();
@@ -137,7 +135,7 @@ const playerSlice = createSlice({
                     audio.play();
                     state.isPlaying = true;
                 } else {
-                    alert('File is broken :/')
+                    alert('File is broken :/');
                 }
             }
         },

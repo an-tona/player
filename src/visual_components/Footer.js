@@ -50,9 +50,10 @@ const CoverImage = styled('div')({
 
 const TinyText = styled(Typography)({
   fontSize: '0.75rem',
-  opacity: 0.38,
+  opacity: 0.8,
   fontWeight: 500,
   letterSpacing: 0.2,
+  color:'black'
 });
 
 

@@ -141,7 +141,7 @@ const DNDTrack = ({ track, onDelete }) => (
                   <Typography className='track_artist' sx={{ fontSize: 14 }}>
                       {track?.id3?.artist || 'Unknown'}
                   </Typography>
-              </div>
+              </div> 
               <Button
                   style={{ minWidth: '40px', width: '40px', height: '40px', borderRadius: '100%', position: 'relative', right: '-70px' }}
                   onClick={() => onDelete(track)}
